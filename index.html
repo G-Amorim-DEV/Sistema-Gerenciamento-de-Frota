@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gestão de Frota — SaaS</title>
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="app" id="app">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar" aria-label="Barra lateral">
+      <div class="brand">
+        <h1>Minha Frota</h1>
+        <button id="hamburger" class="hamburger" aria-label="Alternar menu">☰</button>
+      </div>
+
+      <nav class="categories" aria-label="Categorias de veículos">
+        <button class="cat-btn active" data-cat="all" title="Mostrar todos os veículos">Todos</button>
+        <button class="cat-btn" data-cat="terrestres" title="Veículos terrestres">Terrestres</button>
+        <button class="cat-btn" data-cat="aereos" title="Veículos aéreos">Aéreos</button>
+        <button class="cat-btn" data-cat="ferroviarios" title="Veículos ferroviários">Ferroviários</button>
+        <button class="cat-btn" data-cat="maritimos" title="Veículos marítimos">Marítimos</button>
+        <button class="cat-btn" data-cat="militares" title="Veículos militares">Militares</button>
+      </nav>
+
+      <div class="sidebar-actions" aria-hidden="false">
+        <button id="btnStats" title="Abrir estatísticas">📊 Estatísticas</button>
+        <button id="btnLog" title="Abrir log">📝 Log</button>
+        <button id="btnManual" title="Abrir manual">📘 Manual</button>
+        <button id="btnSettings" title="Configurações">⚙️ Configurações</button>
+        <button id="btnOpenMap" title="Abrir mapa">🗺️ Mapa</button>
+        <button id="btnImport" title="Importar frota">📂 Importar</button>
+        <button id="btnExport" title="Exportar frota">💾 Exportar</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main" role="main">
+      <header class="main-header">
+        <h2>Data Control — Gestão de Frota</h2>
+        <div class="header-controls">
+          <div class="legend" aria-hidden="true">
+            <span><span class="dot connected"></span> Conectado</span>
+            <span><span class="dot secure"></span> Seguro</span>
+            <span><span class="dot moving"></span> Em movimento</span>
+            <span><span class="dot active"></span> Ativo</span>
+            <span><span class="dot fav"></span> Favorito</span>
+          </div>
+
+          <div class="notif-area">
+            <button id="btnNotif" class="notif-btn" aria-haspopup="true" aria-expanded="false"
+              title="Notificações">🔔</button>
+            <div id="notifMenu" class="notif-menu" aria-hidden="true" role="menu"></div>
+          </div>
+
+          <div class="filter-area">
+            <button id="filterToggle" aria-expanded="false" aria-controls="filterMenu">Filtro ▾</button>
+            <div id="filterMenu" class="filter-menu" aria-hidden="true" role="menu">
+              <label><input type="checkbox" id="fActive"> Ativos</label>
+              <label><input type="checkbox" id="fMoving"> Em movimento</label>
+              <label><input type="checkbox" id="fConnected"> Conectados</label>
+              <label><input type="checkbox" id="fSecure"> Seguros</label>
+              <label><input type="checkbox" id="fLowFuel"> Combustível &lt;20%</label>
+              <label>Ordenar:
+                <select id="sortSelect" aria-label="Ordenar veículos">
+                  <option value="none">Padrão</option>
+                  <option value="combAsc">Combustível asc.</option>
+                  <option value="combDesc">Combustível desc.</option>
+                  <option value="name">Nome</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      
+<div class="header-mode">
+  <div>Modo: <strong id="modeLabel">Manual</strong></div>
+  <small>Atalhos: R = robô • M = mapa • N = novo</small>
+</div>
+<button id="btnTheme" class="btn" aria-label="Alternar tema">🌙</button>
+
+</header>
+
+
+      <section class="controls-row" role="region" aria-label="Controles">
+        <input id="searchInput" placeholder="Buscar veículo (nome, categoria, combustível)" aria-label="Buscar veículo">
+        <button id="btnAdd" class="btn primary" aria-label="Adicionar veículo">➕ Adicionar</button>
+
+        <!-- Botão robô grande e acessível -->
+        <button id="btnRobot" class="robot-btn" aria-pressed="false" title="Ativar/Desativar modo robô">🤖</button>
+      </section>
+
+      <section class="quick-stats" aria-label="Estatísticas rápidas">
+        <div class="stat">
+          <div id="statTotal">0</div>
+          <div>Total</div>
+        </div>
+        <div class="stat">
+          <div id="statActive">0</div>
+          <div>Ativos</div>
+        </div>
+        <div class="stat">
+          <div id="statMoving">0</div>
+          <div>Movendo</div>
+        </div>
+        <div class="stat">
+          <div id="statLowFuel">0</div>
+          <div>Baixo Comb.</div>
+        </div>
+      </section>
+
+      <section id="alertsRow" class="alerts-row" aria-live="polite"></section>
+
+      <section id="fleetGrid" class="fleet-grid" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <header class="modal-header">
+        <h3 id="modalTitle"></h3>
+        <button id="modalClose" class="close-btn" aria-label="Fechar diálogo">✕</button>
+      </header>
+      <div id="modalBody" class="modal-body"></div>
+      <footer id="modalFooter" class="modal-footer"></footer>
+    </div>
+  </div>
+
+  <!-- Map Modal -->
+  <div id="mapOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal map-modal" role="document">
+      <header class="modal-header">
+        <h3 id="mapTitle">Mapa em tempo real</h3>
+        <div class="map-controls">
+          <button id="btnFollow" class="btn" title="Seguir veículo selecionado">📍 Seguir</button>
+          <button id="mapClose" class="close-btn" aria-label="Fechar mapa">✕</button>
+        </div>
+      </header>
+      <div id="mapCanvas" class="map-canvas" tabindex="0" aria-label="Mapa de veículos"></div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" aria-live="polite" class="toast-container"></div>
+
+  <script src="js/script.js"></script>
+</body>
+
+</html>
